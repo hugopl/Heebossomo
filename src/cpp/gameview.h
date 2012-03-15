@@ -22,10 +22,11 @@
 
 #include <QDeclarativeView>
 #include <QDeclarativeContext>
+#include <QHostAddress>
 
 #include "gamemapset.h"
 
-//------------------------------------------------------------------------------
+class Opponent;
 
 class GameView : public QDeclarativeView {
 Q_OBJECT
@@ -39,7 +40,9 @@ public slots:
 private:
   void writeSettings();
   void readSettings();
+  QIODevice* setupTcpNetwork();
 
+  Opponent* m_opponent;
   GameMapSet* m_mapset;
   int m_level;
 };

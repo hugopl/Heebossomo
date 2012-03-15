@@ -18,9 +18,12 @@
 */
 
 #include "gameview.h"
+#include "opponent.h"
 
 #include <QDeclarativeEngine>
 #include <QGraphicsObject>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 //------------------------------------------------------------------------------
 
@@ -30,8 +33,13 @@ GameView::GameView(QWidget* parent) : QDeclarativeView(parent) {
   m_mapset = new GameMapSet(":/map.dat", m_level, this);
   connect(m_mapset, SIGNAL(levelChanged()), this, SLOT(onLevelChanged()));
 
+  QIODevice* d = setupTcpNetwork();
+  if (!d)
+      qFatal("fuck!");
+  m_opponent = new Opponent(this, d);
   rootContext()->setContextProperty("mapset", m_mapset);
   rootContext()->setContextProperty("gameview", this);
+  rootContext()->setContextProperty("opponent", m_opponent);
 
   setSource(QUrl("qrc:///qml/main.qml"));
 }
@@ -66,6 +74,31 @@ void GameView::writeSettings() {
 void GameView::readSettings() {
   QSettings s("heebo", "heebo");
   s.beginGroup("Mapset");
-  m_level = s.value("level", 0).toInt();
+  m_level = 0;//s.value("level", 0).toInt();
   s.endGroup();
+}
+
+QIODevice* GameView::setupTcpNetwork()
+{
+    // FIXME: A Ui should exist for this! cmd line is nonsense!!!
+    QStringList args = QCoreApplication::instance()->arguments();
+    if (args.contains("--server")) {
+        QTcpServer* m_server = new QTcpServer(this);
+        qDebug() << "I'm the server! waiting for clients...";
+        m_server->listen(QHostAddress::Any, 1234);
+        if (m_server->waitForNewConnection(-1)) {
+            // FIXME: close the server!!!
+            return m_server->nextPendingConnection();
+        }
+    } else if (args.count() > 1){
+        QHostAddress addr(args[1]);
+        qDebug() << "I'm the client! going to " << addr;
+        QTcpSocket* socket = new QTcpSocket(this);
+        socket->connectToHost(addr, 1234);
+        if (socket->waitForConnected())
+            return socket;
+    } else {
+        qFatal("wrong args... blah!");
+    }
+    return 0;
 }

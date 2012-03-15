@@ -265,5 +265,11 @@ JewelPage {
         }
     }
 
+   Connections {
+       target: opponent
+       onUnclearBlock: Jewels.unclearBlock();
+       onLockBlock: Jewels.lockBlock();
+   }
+
 }
 

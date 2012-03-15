@@ -449,6 +449,8 @@ var checkSubsequentLine = function(j, rows, mark) {
                     if (count >= 3) {
                         clearRandomBlock(last_b, count-2);
                     }
+                    if (count)
+                        opponent.jewelsDestroyed(count + 1);
                 }
                 changes++;
             }
@@ -458,6 +460,35 @@ var checkSubsequentLine = function(j, rows, mark) {
     }
     return changes;
 };
+
+var lockBlock = function() {
+    console.log("locking block!");
+    while (true) {
+        var i = random(0, board_width);
+        var j = random(0, board_height);
+        if (board[i][j] && !board[i][j].locked) {
+            board[i][j].locked = true;
+            break;
+        }
+    }
+}
+
+var unclearBlock = function() {
+    console.log("unclear block!");
+    if (unclearedPoints.length === board_width * board_height) {
+        lockBlock();
+    } else {
+        while (true) {
+            var i = random(0, board_width);
+            var j = random(0, board_height);
+            if (bg_grid[i][j] && bg_grid[i][j].cleared) {
+                bg_grid[i][j].cleared = false;
+                unclearedPoints.push(point({x:i, y:j}));
+                break;
+            }
+        }
+    }
+}
 
 //-----------------------------------------------------------------------------
 

@@ -17,7 +17,7 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "gameview.h"
 
 Q_DECL_EXPORT int main(int argc, char** argv) {
