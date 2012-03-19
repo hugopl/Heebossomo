@@ -18,12 +18,21 @@ SOURCES += \
     src/cpp/opponent.cpp
 
 OTHER_FILES += \
-    debian/rules \
-    debian/README \
-    debian/copyright \
-    debian/control \
-    debian/compat \
-    debian/changelog \
+    src/qml/AboutPage.qml \
+    src/qml/Block.qml \
+    src/qml/FullPage.qml \
+    src/qml/FullPageText.qml \
+    src/qml/HelpPage.qml \
+    src/qml/JewelDialog.qml \
+    src/qml/JewelPage.qml \
+    src/qml/Jewel.qml \
+    src/qml/MainPage.qml \
+    src/qml/main.qml \
+    src/qml/MenuButton.qml \
+    src/qml/ScrollBar.qml \
+    src/qml/ToolBar.qml \
+    src/js/constants.js \
+    src/js/jewels.js \
     qtc_packaging/debian_harmattan/rules \
     qtc_packaging/debian_harmattan/README \
     qtc_packaging/debian_harmattan/manifest.aegis \
@@ -35,10 +44,6 @@ OTHER_FILES += \
 RESOURCES += common.qrc
 contains(MEEGO_EDITION,harmattan) {
     DEFINES += HARMATTAN
-    RESOURCES += harmattan.qrc
-}
-!contains(MEEGO_EDITION,harmattan) {
-    RESOURCES += desktop.qrc
 }
 
 target.path = /opt/heebossomo/bin

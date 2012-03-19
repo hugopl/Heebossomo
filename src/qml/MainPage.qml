@@ -19,8 +19,8 @@
 
 import QtQuick 1.0
 
-import "qrc:///js/constants.js" as Constants
-import "qrc:///js/jewels.js" as Jewels
+import "../js/constants.js" as Constants
+import "../js/jewels.js" as Jewels
 
 JewelPage {
     id: mainPage
@@ -42,6 +42,7 @@ JewelPage {
         jewelKilled.connect(Jewels.onChanges);
         okDialog.closed.connect(Jewels.dialogClosed);
         okDialog.opened.connect(tintRectangle.show);
+        mainMenu.toggle();
     }
 
     function openFile(file) {
@@ -158,14 +159,14 @@ JewelPage {
             tintRectangle.opacity = 0;
         }            
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                mainMenu.hide();
-                if (!okDialog.isClosed())
-                  okDialog.hide();
-            }
-        }
+//        MouseArea {
+//            anchors.fill: parent
+//            onClicked: {
+//                mainMenu.hide();
+//                if (!okDialog.isClosed())
+//                  okDialog.hide();
+//            }
+//        }
 
         Behavior on opacity {
             SmoothedAnimation { velocity: 2.0 }
@@ -225,7 +226,7 @@ JewelPage {
                 text: "New game"
                 buttonImage: "qrc:///images/icon_newgame.png"
                 pressedButtonImage: "qrc:///images/icon_newgame_pressed.png"
-                onClicked: { mainMenu.hide(); Jewels.firstLevel() }
+                onClicked: { mainMenu.hide(); openFile("NewGame.qml") }
             }
             MenuButton {
                 text: "Restart level"

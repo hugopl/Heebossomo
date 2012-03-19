@@ -10,7 +10,7 @@ Opponent::Opponent(QObject* parent, QIODevice* socket)
 
 void Opponent::jewelsDestroyed(int count)
 {
-    m_socket->write((char*)&count, 1);
+//    m_socket->write((char*)&count, 1);
 }
 
 void Opponent::readCommands()
