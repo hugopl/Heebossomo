@@ -17,8 +17,8 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 1.0
-import com.nokia.meego 1.0
+import QtQuick 1.1
+import com.nokia.meego 1.1
 
 Page {
     orientationLock: PageOrientation.LockPortrait

@@ -24,8 +24,9 @@ Qt.include("constants.js")
 var board;
 var bg_grid;
 
-// List of coordinates of potentially uncleared points
-var unclearedPoints;
+// List of cleared coordinates
+var clearedPoints;
+var unlockedPoints;
 
 // Keeps information about the two blocks that are swiched
 var moving1;
@@ -180,34 +181,35 @@ var newBackgroundBlock = function (j, i) {
 
 // Starts new level
 var startNewGame = function () {
-    currentLevelText.text = mapset.level+1;
-    lastLevelText.text = mapset.numLevels;
     mainPage.isRunning = false;
     finalAnim = 0;
 
     playerMovement = false;
     initBoard();
 
-    for (var j=0; j<board_height; j++)
-        for (var i=0; i<board_width; i++)
+    var i;
+    var j;
+    for (j = 0; j < board_height; j++)
+        for (i = 0; i < board_width; i++)
             newBackgroundBlock(j, i);
 
-    unclearedPoints = [];
+    clearedPoints = [];
+    unlockedPoints = [];
 
-    for (var j=0; j<board_height; j++) {
-        for (var i=0; i<board_width; i++) {
+    for (j = 0; j < board_height; j++) {
+        for (i = 0; i < board_width; i++) {
             var b = mapset.at(j,i);
             if (b === 'W') {
                 bg_grid[j][i].blocking = true;
             } else {
                 bg_grid[j][i].wall_border = b;
-                unclearedPoints.push(point({x:i, y:j}));
+                unlockedPoints.push(point({x:i, y:j}));
             }
         }
     }
 
-    for (var j=0; j<board_height; j++) {
-        for (var i=0; i<board_width; i++) {
+    for (j = 0; j < board_height; j++) {
+        for (i = 0; i < board_width; i++) {
             if (bg_grid[j][i].blocking) {
                 continue;
             }
@@ -237,8 +239,6 @@ var startNewGame = function () {
         }
     }
     
-    checkMovesAndReport();
-
     return true;
 };
 
@@ -281,36 +281,28 @@ var prevLevel = function () {
 // Check victory condition
 var victoryCheck = function () {
     var victory = true;
-    for (var j=0; j<board_height && victory; j++) {
-        for (var i=0; i<board_width && victory; i++) {
-            victory =
-                bg_grid[j][i].cleared || bg_grid[j][i].blocking;
-        }
+    for (var j = 0; j < board_height && victory; j++) {
+        for (var i = 0; i < board_width && victory; i++)
+            victory = bg_grid[j][i].cleared || bg_grid[j][i].blocking;
     }
 
     if (victory && okDialog.isClosed() &&!finalAnim) {
-        if (mapset.onLastLevel) {
-            finalAnim = 1;
-            finalDeleted = 1000;
-            var counter = 0;
-            for (j=0; j<board_height; j++) {
-                for (i=0; i<board_width; i++) {
-                    if (!bg_grid[j][i].blocking && board[j] && board[j][i] &&
-                        board[j][i].dying === false) {
-                        var obj = board[j][i];
-                        obj.fdPause = Math.random()*5000;
-                        obj.dying = true;
-                        board[j][i] = undefined;
-                        counter++;
-                    }
+        finalAnim = 1;
+        finalDeleted = 1000;
+        var counter = 0;
+        for (j = 0; j < board_height; j++) {
+            for (i = 0; i < board_width; i++) {
+                if (!bg_grid[j][i].blocking && board[j] && board[j][i] &&
+                    board[j][i].dying === false) {
+                    var obj = board[j][i];
+                    obj.fdPause = Math.random() * 5000;
+                    obj.dying = true;
+                    board[j][i] = undefined;
+                    counter++;
                 }
             }
-            finalDeleted = counter;
-        } else {
-            okDialog.mode = 0;
-            var dt = random(0,level_text_num-1);
-            okDialog.show(level_text[dt], level_answer[dt]);
         }
+        finalDeleted = counter;
     }
 };
     
@@ -332,50 +324,6 @@ var isRunning = function () {
     mainPage.isRunning = running;
     return running;
 };
-
-//-----------------------------------------------------------------------------
-
-// Clear random a block of given type
-var clearRandomBlock = function (block_type, count) {
-    var i, pt, bg, obj;
-
-    if (!isNumber(block_type) || !isNumber(count)) {
-        console.log("Bad call: clearRandomBlock("+block_type+", "+count+")");
-        return;
-    }
-
-    // First, prune the unclearedPoints list from already cleared
-    // points.
-    for (i=unclearedPoints.length-1; i>=0; i--) {
-        pt = unclearedPoints[i];
-        bg = bg_grid[pt.y][pt.x];
-        if (bg.blocking || bg.cleared) {
-            unclearedPoints.splice(i, 1);
-        }
-    }
-
-    // Make a copy of the unclearedPoints list so that we can freely
-    // remove items from it.
-    var list = unclearedPoints.slice(0);
-
-    // Second, try to find an uncleared point with the correct type.
-    while (list.length > 0 && count > 0) {
-        // Remove a random point from the list.
-        i = random(0,list.length-1);
-        pt = list.splice(i, 1)[0];
-
-        obj = board[pt.y][pt.x];
-
-        // If the block object is defined and of the correct type
-        // clear it.
-        if (obj !== undefined && obj.type === block_type) {
-            bg_grid[pt.y][pt.x].cleared = true;
-            count--;
-        }
-    } 
-};
-
-//-----------------------------------------------------------------------------
 
 // Check if blocks should fall down
 var fallDown = function () {
@@ -437,18 +385,20 @@ var checkSubsequentLine = function(j, rows, mark) {
                         if (rows) {
                             r=j; c=k;
                         }
-                        if (board[r][c].locked) {
+                        var isLocked = board[r][c].locked;
+                        if (isLocked) {
                             board[r][c].locked--;
                         }
                         if (!board[r][c].locked) {
                             board[r][c].to_remove = true;
                             bg_grid[r][c].cleared = true;
+                            clearedPoints.push(point({x:c, y:r}));
+                            if (isLocked)
+                                unlockedPoints.push(point({x:c, y:r}));
+
                         }
                     }
                     
-                    if (count >= 3) {
-                        clearRandomBlock(last_b, count-2);
-                    }
                     if (count)
                         opponent.jewelsDestroyed(count + 1);
                 }
@@ -463,30 +413,30 @@ var checkSubsequentLine = function(j, rows, mark) {
 
 var lockBlock = function() {
     console.log("locking block!");
-    while (true) {
-        var i = random(0, board_width);
-        var j = random(0, board_height);
-        if (board[i][j] && !board[i][j].locked) {
-            board[i][j].locked = true;
+    if (!unlockedPoints.length)
+        return;
+    console.log("locando!");
+
+    // try 5 times... because the unlocked point can be empty
+    for (var t = 0; t < 5; ++t) {
+    var i = random(0, unlockedPoints.length - 1);
+        var pt = unlockedPoints[i];
+        if (board[pt.y][pt.x]) {
+            unlockedPoints.splice(i, 1);
+            board[pt.y][pt.x].locked++;
             break;
         }
     }
 }
 
 var unclearBlock = function() {
-    console.log("unclear block!");
-    if (unclearedPoints.length === board_width * board_height) {
+    console.log("unclear block! " + clearedPoints);
+    if (!clearedPoints.length) {
         lockBlock();
     } else {
-        while (true) {
-            var i = random(0, board_width);
-            var j = random(0, board_height);
-            if (bg_grid[i][j] && bg_grid[i][j].cleared) {
-                bg_grid[i][j].cleared = false;
-                unclearedPoints.push(point({x:i, y:j}));
-                break;
-            }
-        }
+        var i = random(0, clearedPoints.length - 1);
+        var pt = clearedPoints.splice(i, 1)[0];
+        bg_grid[pt.y][pt.x].cleared = false;
     }
 }
 
@@ -540,104 +490,6 @@ var checkForSubsequentJewels = function (mark) {
     return changes;
 };
 
-//-----------------------------------------------------------------------------
-
-var checkSwitch = function (pt1, pt2) {
-    var changes = 0;
-    changes += checkSubsequentLine(pt1.x, false, false);
-    changes += checkSubsequentLine(pt1.y, true, false);
-    changes += checkSubsequentLine(pt2.x, false, false);
-    changes += checkSubsequentLine(pt2.y, true, false);
-    return changes;
-};
-
-//-----------------------------------------------------------------------------
-
-var checkSingleStep = function(obj, pt, dx, dy) {
-    var pt2, obj2, changes;
-
-    if (obj === undefined || bg_grid.isBlocking(pt) || obj.locked) {
-        return false;
-    }
-    
-    pt2 = point(pt).plus({x: dx, y: dy});
-    if (!pt2.insideGrid() || bg_grid.isBlocking(pt2)) {
-        return false;
-    }
-
-    obj2 = gridObject(board, pt2);
-    if (obj2 === undefined) {
-        return !(dx === 0 && dy === -1);
-        // return true;
-    }
-
-    if (obj2.locked) {
-        return false;
-    }
-
-    board.set(pt, obj2);
-    board.set(pt2, obj);
-
-    changes = checkSwitch(pt, pt2);
-
-    board.set(pt, obj);
-    board.set(pt2, obj2);
-
-    return changes>0;
-};
-
-//-----------------------------------------------------------------------------
-
-var checkMoves = function () {
-    var i, j, obj;
-    var di, dj;
-    var pt;
-    
-    for (i=0; i<board_width; i++) {
-        for (j=0; j<board_height; j++) {
-            pt = point({x: i, y: j});
-            obj = gridObject(board, pt);
-
-            // No need to check if there's no object at i,j
-            if (obj === undefined || bg_grid.isBlocking(pt))
-                continue;
-            
-            if (checkSingleStep(obj, pt, -1,  0)) {
-                // console.log("CANMOVE: "+pt.str()+" left");
-                return true;
-            }
-            if (checkSingleStep(obj, pt,  1,  0)) { 
-                // console.log("CANMOVE: "+pt.str()+" right");
-                return true;
-            }
-            if (checkSingleStep(obj, pt,  0, -1)) {
-                // console.log("CANMOVE: "+pt.str()+" up");
-                return true;
-            }
-            if (checkSingleStep(obj, pt,  0,  1)) {
-                // console.log("CANMOVE: "+pt.str()+" down");
-                return true;
-            }
-        }
-    }
-    
-    return false;
-};
-
-//-----------------------------------------------------------------------------
-
-var checkMovesAndReport = function () {
-    var movesLeft = checkMoves();
-    if (!movesLeft) {
-        okDialog.mode = 2;
-        okDialog.show("No more moves!\n"+
-                      "I'll reshuffle the blocks.",
-                      "kthxbai!");
-    }
-};
-
-//-----------------------------------------------------------------------------
-
 // Checks if new blocks need to be spawned
 var spawnNewJewels = function () {
     for (var i=0; i<board_width; i++) {
@@ -675,23 +527,7 @@ var onChanges = function () {
         return;
     }
 
-    if (playerMovement) {
-        var changes = checkSwitch(moving1.bpt, moving2.bpt);
-        
-        if (bg_grid.isBlocking(moving2.bpt) || 
-            (!changes && moving2.obj !== undefined))
-        {
-            board.set(moving1.bpt, moving1.obj);
-            board.set(moving2.bpt, moving2.obj);
-
-            moving1.obj.moveToBlock(moving1.bpt);
-            if (moving2.obj !== undefined) {
-                moving2.obj.moveToPoint(moving2.oldPt);
-            }
-        }
-        playerMovement = false;
-    }
-
+    playerMovement = false;
     fallDown();
 
     if (!isRunning()) {
@@ -703,10 +539,6 @@ var onChanges = function () {
         checkForSubsequentJewels(true);
 
     victoryCheck();
-
-    if (!finalAnim && !isRunning()) {
-        checkMovesAndReport();
-    }
 };
 
 //-----------------------------------------------------------------------------
@@ -771,7 +603,7 @@ var mousePressed = function (x, y) {
 // Called when user moves mouse or swipes 
 var mouseMoved = function (x, y) {
     if (moving1 === undefined || moving1.obj === undefined ||
-        okDialog.visible || mainMenu.visible || isRunning() || finalAnim ||
+        okDialog.visible || isRunning() || finalAnim ||
        moving1.obj.locked || moving1.started !== false)
     {
         if (!playerMovement)

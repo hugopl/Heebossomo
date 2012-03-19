@@ -17,7 +17,7 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 1.0
+import QtQuick 1.1
 
 import "../js/constants.js" as Constants
 import "../js/jewels.js" as Jewels
@@ -223,16 +223,16 @@ JewelPage {
             columns: 2
 
             MenuButton {
-                text: "New game"
+                text: "Create game"
                 buttonImage: "qrc:///images/icon_newgame.png"
                 pressedButtonImage: "qrc:///images/icon_newgame_pressed.png"
-                onClicked: { mainMenu.hide(); openFile("NewGame.qml") }
+                onClicked: { mainMenu.hide(); openFile("CreateGame.qml"); }
             }
             MenuButton {
-                text: "Restart level"
+                text: "Join game"
                 buttonImage: "qrc:///images/icon_restart.png"
                 pressedButtonImage: "qrc:///images/icon_restart_pressed.png"
-                onClicked: { mainMenu.hide(); Jewels.startNewGame() }
+                onClicked: { mainMenu.hide(); openFile("JoinGame.qml"); }
             }
 
             MenuButton {
@@ -270,6 +270,7 @@ JewelPage {
        target: opponent
        onUnclearBlock: Jewels.unclearBlock();
        onLockBlock: Jewels.lockBlock();
+       onOpponentIsReady: mainMenu.hide();
    }
 
 }

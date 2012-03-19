@@ -1,4 +1,5 @@
 /*
+  Copyright 2012 Hugo Parente Lima
   Copyright 2012 Mats Sjöberg
   
   This file is part of the Heebo programme.
@@ -17,9 +18,9 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 1.0
+import QtQuick 1.1
 
-import "qrc:///js/constants.js" as Constants
+import "../js/constants.js" as Constants
 
 FullPage {
     id: mainPage
@@ -55,7 +56,7 @@ FullPage {
 
         FullPageText {
             id: cred1Text
-            text: Constants.heebo_credit_coding
+            text: "<i>Heebossomo Code</i><br/><b>Hugo Parente Lima</b><br/>hugo.pl@gmail.com"
 
             anchors.top: versionText.bottom
             horizontalAlignment: Text.AlignHCenter
@@ -63,16 +64,24 @@ FullPage {
 
         FullPageText {
             id: cred2Text
-            text: Constants.heebo_credit_graphics
+            text: "<i>Original Heebo Code</i><br\><b>Mats Sj&ouml;berg</b><br\>mats@sjoberg.fi<br/><a style=\"color: #D800D8\" href=\"http://www.sjoberg.fi/mats/\">www.sjoberg.fi/mats</a>"
 
             anchors.top: cred1Text.bottom
             horizontalAlignment: Text.AlignHCenter
         }
 
         FullPageText {
+            id: cred3Text
+            text: Constants.heebo_credit_graphics
+
+            anchors.top: cred2Text.bottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        FullPageText {
             id: copyrightText
             text: Constants.heebo_copyright
-            anchors.top: cred2Text.bottom
+            anchors.top: cred3Text.bottom
             anchors.topMargin: 50
         }
 

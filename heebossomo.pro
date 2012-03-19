@@ -27,6 +27,8 @@ OTHER_FILES += \
     src/qml/JewelPage.qml \
     src/qml/Jewel.qml \
     src/qml/MainPage.qml \
+    src/qml/CreateGame.qml \
+    src/qml/JoinGame.qml \
     src/qml/main.qml \
     src/qml/MenuButton.qml \
     src/qml/ScrollBar.qml \
@@ -39,12 +41,22 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog
+    qtc_packaging/debian_harmattan/changelog \
+    src/qml/MainMenu.qml \
+    src/js/util.js \
+    src/qml/Game.qml
 
 RESOURCES += common.qrc
 contains(MEEGO_EDITION,harmattan) {
     DEFINES += HARMATTAN
+    # enable booster
+    CONFIG += qdeclarative-boostable
 }
+!contains(MEEGO_EDITION,harmattan) {
+    CONFIG += declarative
+}
+CONFIG += mobility
+MOBILITY += connectivity
 
 target.path = /opt/heebossomo/bin
 desktopfile.files = heebossomo_harmattan.desktop
@@ -54,7 +66,5 @@ icon.path = /usr/share/icons/hicolor/80x80/apps
 INSTALLS += icon desktopfile
 INSTALLS += target
 
-# enable booster
-CONFIG += qdeclarative-boostable
 QMAKE_CXXFLAGS += -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
 QMAKE_LFLAGS += -pie -rdynamic

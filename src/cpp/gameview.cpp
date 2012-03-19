@@ -33,10 +33,7 @@ GameView::GameView(QWidget* parent) : QDeclarativeView(parent) {
   m_mapset = new GameMapSet(":/map.dat", m_level, this);
   connect(m_mapset, SIGNAL(levelChanged()), this, SLOT(onLevelChanged()));
 
-  QIODevice* d = 0;//setupTcpNetwork();
-//  if (!d)
-//      qFatal("fuck!");
-  m_opponent = new Opponent(this, d);
+  m_opponent = new Opponent(this);
   rootContext()->setContextProperty("mapset", m_mapset);
   rootContext()->setContextProperty("gameview", this);
   rootContext()->setContextProperty("opponent", m_opponent);

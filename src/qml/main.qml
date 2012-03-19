@@ -17,16 +17,22 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 1.0
-import com.nokia.meego 1.0
+import QtQuick 1.1
+import com.nokia.meego 1.1
 
 PageStackWindow {
     id: appWindow
-    initialPage: mainPage
+    initialPage: mainMenu
 
-    MainPage {
-        id: mainPage
+    MainMenu {
+        id: mainMenu
         anchors.fill: parent
         orientationLock: PageOrientation.LockPortrait
     }
+
+//    MainPage {
+//        id: mainPage
+//        anchors.fill: parent
+//        orientationLock: PageOrientation.LockPortrait
+//    }
 }

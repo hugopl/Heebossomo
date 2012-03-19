@@ -1,4 +1,4 @@
-<!--*- xml -*-->
+<?xml version="1.0" ?>
 <RCC>
   <qresource prefix="/">
     <!-- Game images -->
@@ -64,12 +64,15 @@
     <!-- JavaScript -->
     <file alias="js/jewels.js">src/js/jewels.js</file>
     <file alias="js/constants.js">src/js/constants.js</file>
+    <file alias="js/util.js">src/js/util.js</file>
     <!-- QML -->
     <file alias="qml/Jewel.qml">src/qml/Jewel.qml</file>
     <file alias="qml/Block.qml">src/qml/Block.qml</file>
     <file alias="qml/JewelDialog.qml">src/qml/JewelDialog.qml</file>
     <file alias="qml/MainPage.qml">src/qml/MainPage.qml</file>
     <file alias="qml/MenuButton.qml">src/qml/MenuButton.qml</file>
+    <file alias="qml/CreateGame.qml">src/qml/CreateGame.qml</file>
+    <file alias="qml/JoinGame.qml">src/qml/JoinGame.qml</file>
     <file alias="qml/FullPage.qml">src/qml/FullPage.qml</file>
     <file alias="qml/FullPageText.qml">src/qml/FullPageText.qml</file>
     <file alias="qml/AboutPage.qml">src/qml/AboutPage.qml</file>
@@ -78,5 +81,7 @@
     <file alias="qml/main.qml">src/qml/main.qml</file>
     <file alias="qml/JewelPage.qml">src/qml/JewelPage.qml</file>
     <file alias="qml/ScrollBar.qml">src/qml/ScrollBar.qml</file>
+    <file alias="qml/MainMenu.qml">src/qml/MainMenu.qml</file>
+    <file alias="qml/Game.qml">src/qml/Game.qml</file>
   </qresource>
 </RCC>

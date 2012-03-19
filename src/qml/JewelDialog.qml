@@ -17,9 +17,9 @@
   along with Heebo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 1.0
+import QtQuick 1.1
 
-import "qrc:///js/constants.js" as Constants
+import "../js/constants.js" as Constants
 
 Image {
     id: container
@@ -31,6 +31,8 @@ Image {
     
     function show(text, answer) {
         dialogText.text = text;
+        if (!answer)
+            answer = "OK!";
         answerText.text = answer;
         container.opacity = 1;
         container.opened()

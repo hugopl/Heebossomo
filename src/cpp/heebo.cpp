@@ -22,7 +22,7 @@
 
 Q_DECL_EXPORT int main(int argc, char** argv) {
     QApplication app(argc, argv);
-    
+
     GameView view;
 #ifdef HARMATTAN
     view.showFullScreen();
