@@ -71,7 +71,15 @@ void Opponent::clientConnectedOnMe()
 void Opponent::jewelsDestroyed(int count)
 {
     Q_ASSERT(m_socket);
-    m_socket->write((char*)&count, 1);
+    char ccount = char(count);
+    m_socket->write(&ccount, 1);
+}
+
+void Opponent::fuckThatShitIWon()
+{
+    Q_ASSERT(m_socket);
+    char vitory = -1;
+    m_socket->write(&vitory, 1);
 }
 
 void Opponent::readCommands()
@@ -86,8 +94,8 @@ void Opponent::readCommands()
                 for (int i = 0, max = value - 3; i < max; ++i)
                     emit lockBlock();
             }
-        } else {
-            qCritical() << "value: " << value;
+        } else if (value == -1){
+            emit youLoose();
         }
     }
 }

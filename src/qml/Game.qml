@@ -127,20 +127,58 @@ JewelPage {
 //        }
     }
 
+    Rectangle {
+        id: tintRectangle
+        anchors.fill: parent
+        color: "#3399FF"
+        opacity: 0.0
+        visible: opacity > 0
+
+        z: 10
+
+        function show() {
+            var colors = ["#3399FF", "#11FF00", "#7300E6", "#FF3C26",
+                          "#B300B3" /*, "#FFD500"*/];
+
+            tintRectangle.color = colors[Jewels.random(0,4)];
+            tintRectangle.opacity = 0.65;
+        }
+
+        function hide() {
+            tintRectangle.opacity = 0;
+        }
+
+        Behavior on opacity {
+            SmoothedAnimation { velocity: 2.0 }
+        }
+    }
+
     Connections {
         target: opponent
         onUnclearBlock: Jewels.unclearBlock();
         onLockBlock: Jewels.lockBlock();
-        onOpponentDisconnected: okDialog.show("Opponent disconnected!");
+        onOpponentDisconnected: okDialog.show("Opponent disconnected!", 1);
+        onYouLoose: okDialog.show("You loose!!", 2);
     }
 
     Component.onCompleted: {
         Jewels.init();
         animDone.connect(Jewels.onChanges);
         jewelKilled.connect(Jewels.onChanges);
-//        okDialog.closed.connect(Jewels.dialogClosed);
-//        okDialog.opened.connect(tintRectangle.show);
+        okDialog.closed.connect(dialogClosed);
+        okDialog.opened.connect(tintRectangle.show);
 //        mainMenu.toggle();
     }
+
+    function dialogClosed(mode) {
+        switch (mode) {
+        case 1:
+        case 2: // on case 2 the game would restart
+            tintRectangle.hide();
+            pageStack.pop();
+            break;
+        }
+    }
+
 
 }

@@ -303,6 +303,7 @@ var victoryCheck = function () {
             }
         }
         finalDeleted = counter;
+        opponent.fuckThatShitIWon();
     }
 };
     
@@ -412,10 +413,8 @@ var checkSubsequentLine = function(j, rows, mark) {
 };
 
 var lockBlock = function() {
-    console.log("locking block!");
     if (!unlockedPoints.length)
         return;
-    console.log("locando!");
 
     // try 5 times... because the unlocked point can be empty
     for (var t = 0; t < 5; ++t) {
@@ -430,7 +429,6 @@ var lockBlock = function() {
 }
 
 var unclearBlock = function() {
-    console.log("unclear block! " + clearedPoints);
     if (!clearedPoints.length) {
         lockBlock();
     } else {
@@ -521,8 +519,7 @@ var onChanges = function () {
     if (finalAnim) {
         finalAnim++;
         if (finalAnim >= finalDeleted && okDialog.isClosed()) {
-            okDialog.mode = 1;
-            okDialog.show(last_level_msg, last_level_answer);
+            okDialog.show("You won!", 1);
         }
         return;
     }
@@ -555,27 +552,6 @@ var reshuffleBlocks = function () {
         }
     }
     onChanges();
-};
-
-//-----------------------------------------------------------------------------
-
-var dialogClosed = function (mode) {
-    switch (mode) {
-    case 0: // go to next level
-        tintRectangle.hide();
-        nextLevel();
-        break;
-    case 1: // after last level
-        startNewGame();
-        mainMenu.toggle();
-        break;
-    case 2: // after no-more-moves notification
-        tintRectangle.hide();
-        reshuffleBlocks();
-        break;
-    default:
-        console.log("dialogClosed("+mode+"): unknown dialog mode.");
-    }
 };
 
 //-----------------------------------------------------------------------------

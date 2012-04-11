@@ -22,6 +22,7 @@ public slots:
     void connectToServer(const QString &btAddr);
 
     void jewelsDestroyed(int count);
+    void fuckThatShitIWon();
 private slots:
     void readCommands();
     void clientConnectedOnMe();
@@ -30,6 +31,7 @@ private slots:
 signals:
     void opponentIsReady();
     void opponentDisconnected();
+    void youLoose();
     void unclearBlock();
     void lockBlock();
 

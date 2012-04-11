@@ -27,12 +27,12 @@ FullPage {
     }
 
 
-//    BluetoothDiscoveryModel {
-//        id: btModel
-//        minimalDiscovery: true
-////      onDiscoveryChanged: busy.running = discovery;
+    BluetoothDiscoveryModel {
+        id: btModel
+        minimalDiscovery: true
+//      onDiscoveryChanged: busy.running = discovery;
 //        onNewServiceDiscovered: console.log("Found new service " + service.deviceAddress + " " + service.deviceName + " " + service.serviceName);
-//    }
+    }
 
     function getRandomIcon()
     {
@@ -40,12 +40,12 @@ FullPage {
         return "../images/" + icons[Math.floor(Math.random()*(icons.length-1))];
     }
 
-    ListModel {
-        id: btModel
+//    ListModel {
+//        id: btModel
 
-        ListElement {
-        }
-    }
+//        ListElement {
+//        }
+//    }
 
     Component {
         id: btDelegate
@@ -62,14 +62,16 @@ FullPage {
                 Text {
                     font.pixelSize: 32
                     font.bold: true
-                    text: "hugonoote"
+//                    text: "hugonoote"
+                    text: service.deviceName
                     anchors.verticalCenter: icon.verticalCenter
                     anchors.leftMargin: 32
                 }
             }
             MouseArea {
                 anchors.fill: parent
-                onClicked: opponent.connectToServer("00:15:83:3D:0A:57")
+                onClicked: opponent.connectToServer(service.deviceAddress)
+//                onClicked: opponent.connectToServer("00:15:83:3D:0A:57")
             }
         }
     }

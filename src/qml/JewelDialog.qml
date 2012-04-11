@@ -29,11 +29,9 @@ Image {
     signal closed(int mode)
     signal opened
     
-    function show(text, answer) {
+    function show(text, mode) {
         dialogText.text = text;
-        if (!answer)
-            answer = "OK!";
-        answerText.text = answer;
+        container.mode = mode
         container.opacity = 1;
         container.opened()
     }
